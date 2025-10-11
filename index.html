@@ -9,6 +9,50 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
+/* Social Media Buttons */
+.social-links {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.social-links a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-color);
+  font-size: 18px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.social-links a:hover {
+  transform: translateY(-2px);
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 6px 12px rgba(255, 105, 180, 0.4);
+}
+
+/* Custom Kick Icon (since FA doesn't have it) */
+.social-links a[href*="kick.com"] i::before {
+  content: "K";
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+}
+.social-links a[href*="kick.com"] {
+  background: linear-gradient(135deg, #333, #1a1a1a);
+  color: white;
+}
+.social-links a[href*="kick.com"]:hover {
+  background: linear-gradient(135deg, var(--accent), #ff85c0);
+}
 .raffle-rules {
   background: linear-gradient(135deg, rgba(15, 23, 36, 0.8), rgba(7, 16, 33, 0.9));
   backdrop-filter: blur(8px);
@@ -491,6 +535,19 @@
         <span id="liveText">Offline</span>
       </div>
     </header>
+<center>
+<div class="social-links">
+  <a href="https://kick.com/n0chh target="_blank" rel="noopener" title="Kick">
+    <i class="fab fa-kick"></i>
+  </a>
+  <a href="https://instagram.com/n0chh target="_blank" rel="noopener" title="Instagram">
+    <i class="fab fa-instagram"></i>
+  </a>
+  <a href="https://discord.com/invite/YSHJbNV" target="_blank" rel="noopener" title="Discord">
+    <i class="fab fa-discord"></i>
+  </a>
+</div>
+</center>
 
     <div class="controls">
       <input id="channelInput" type="text" placeholder="Enter Kick channel (e.g. odablock)" value="odablock" />
