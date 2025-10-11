@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  
   <title>n0chh Kick Live Stats — Top Chatter</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -45,7 +46,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  text-shadow: 0 0 8px rgba(255, 105, 180, 0.3);
+  text-shadow: 0l 0 8px rgba(255, 105, 180, 0.3);
 }
 
 .raffle-rules ul {
@@ -652,8 +653,8 @@
     top.forEach(([username, count], index) => {
       const rank = index + 1;
       const emotes = Array.from(userEmoteCounts.keys()).filter(u => u === username).length > 0 
-        ? [':heart:', ':fire:', ':star:'] 
-        : [':smile:', ':thumbsup:', ':cool:'];
+        ? ['', '', ''] 
+        : ['', '', ''];
       
       const card = document.createElement('div');
       card.className = `chatter-card rank-${rank <= 3 ? rank : 'default'}`;
