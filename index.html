@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>n0chh Kick Live Stats — Top Chatter</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+.text-emote-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.text-emote-card {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.text-emote-card:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(255,105,180,0.15);
+}
+
+.rank-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  margin-right: 12px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.05);
+  color: var(--text-color);
+}
+
+.rank-1 .rank-number { background: var(--gold); color: #000; }
+.rank-2 .rank-number { background: var(--silver); color: #000; }
+.rank-3 .rank-number { background: var(--bronze); color: #fff; }
+
+.text-emote-content {
+  flex: 1;
+}
+    :root{
+      --bg:#071021;
+      --card:#0f1724;
+      --accent:#ff69b4;
+      --muted:#98a0ab;
+      --glass: rgba(255,255,255,0.03);
+      --success:#10b981;
+      --text-color: #e6eef6;
+      --border: rgba(255,255,255,0.04);
+      --gold: #FFD700;
+      --silver: #C0C0C0;
+      --bronze: #CD7F32;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:'Inter', system-ui, -apple-system, sans-serif;color:var(--text-color);background:linear-gradient(180deg,#03101a 0%, #071021 100%);-webkit-font-smoothing:antialiased}
+    .wrap{max-width:1000px;margin:16px auto;padding:16px}
+    
+    /* Header Styles */
+    header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;justify-content:space-between}
+    .logo{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#d83a8c);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;box-shadow:0 4px 12px rgba(255,105,180,0.3)}
+    h1{font-size:28px;font-weight:800;margin:12px 0;color:#fff;text-shadow: 0 0 10px rgba(255,105,180,0.5);}
+    .sub{color:var(--muted);font-size:14px;margin-top:4px}
+    .giveaway-banner {
+      background: linear-gradient(90deg, #ff69b4, #ff85c0);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 12px;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(255,105,180,0.3);
+      width: 100%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,105,180,0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(255,105,180,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,105,180,0); }
+    }
+    
+    /* Controls */
+    .controls{display:flex;gap:12px;align-items:center;margin-top:16px;flex-wrap:wrap;justify-content:space-between}
+    input[type="text"]{padding:12px 16px;border-radius:12px;border:1px solid var(--border);background:var(--glass);color:inherit;min-width:180px;font-size:15px;width:100%}
+    button{padding:12px 18px;border-radius:12px;border:0;background:var(--accent);color:#fff;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(255,105,180,0.3);transition:all .2s ease;font-size:15px}
+    button:hover, button:active{transform:scale(1.03);opacity:0.95}
+    button.secondary{background:transparent;border:1px solid var(--border);color:var(--muted)}
+    .live-indicator{display:inline-flex;gap:8px;align-items:center;padding:8px 16px;border-radius:24px;background:rgba(255,255,255,0.03);border:1px solid var(--border);font-size:14px}
+    .live-dot{width:10px;height:10px;border-radius:50%}
+    .live-dot.live{background:var(--success);box-shadow:0 0 10px rgba(16,185,129,0.4)}
+    .live-dot.off{background:var(--muted)}
+    
+    /*top chatter red and gree*/
+    .text-emote-card.text-dominant {
+  background: rgba(16, 185, 129, 0.15); /* Green: text dominant */
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.text-emote-card.emote-dominant {
+  background: rgba(239, 68, 68, 0.15); /* Red: emote dominant */
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.text-emote-card{
+  background:rgba(255,255,255,0.02);
+  border-radius:10px;
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  transition:transform 0.2s;
+  border:1px solid var(--border);
+}
+    
+    /* Cards */
+    .card{background:rgba(255,255,255,0.02);border-radius:16px;padding:20px;margin-bottom:20px;border:1px solid var(--border);box-shadow:0 8px 20px rgba(0,0,0,0.25)}
+    .small{font-size:13px;color:var(--muted)}
+    .big-title{font-size:22px;font-weight:800;margin:16px 0 14px;color:#fff;display:flex;align-items:center;gap:10px}
+    .stats-row{display:grid;grid-template-columns: repeat(auto-fit, minmax(110px,1fr));gap:14px;margin:16px 0}
+    .stat-pill{padding:14px;border-radius:12px;background:rgba(255,255,255,0.03);display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,0.15)}
+    .stat-pill .num{font-weight:800;font-size:20px;color:var(--accent)}
+    .stat-pill .small{font-size:12px;text-align:center}
+    
+    /* Top Chatters Leaderboard */
+    .leaderboard-container {
+      position: relative;
+      margin-top: 20px;
+    }
+    .chatter-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
+      gap:16px;
+      margin-top:10px;
+    }
+    .chatter-card{
+      background:rgba(255,255,255,0.03);
+      border-radius:14px;
+      padding:16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      transition:transform 0.3s, box-shadow 0.3s;
+      border:1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .chatter-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+      z-index: -1;
+    }
+    .chatter-card:hover, .chatter-card:active{
+      transform:scale(1.03);
+      box-shadow:0 8px 20px rgba(255,105,180,0.2);
+    }
+    .chatter-card.rank-1 {
+      background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,255,255,0.03));
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 20px rgba(255,215,0,0.3);
+    }
+    .chatter-card.rank-2 {
+      background: linear-gradient(135deg, rgba(192,192,192,0.12), rgba(255,255,255,0.03));
+      border: 2px solid var(--silver);
+      box-shadow: 0 0 20px rgba(192,192,192,0.2);
+    }
+    .chatter-card.rank-3 {
+      background: linear-gradient(135deg, rgba(205,127,50,0.12), rgba(255,255,255,0.03));
+      border: 2px solid var(--bronze);
+      box-shadow: 0 0 20px rgba(205,127,50,0.2);
+    }
+    .rank-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      color: white;
+      z-index: 2;
+    }
+    .rank-1 .rank-badge { background: var(--gold); color: #333; }
+    .rank-2 .rank-badge { background: var(--silver); color: #333; }
+    .rank-3 .rank-badge { background: var(--bronze); }
+    .username{font-weight:700;font-size:16px; display: flex; align-items: center; gap: 8px;}
+    .message-count{font-weight:800;color:var(--accent);font-size:17px;}
+    
+    /* Emote Display */
+    .emote-display {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+    .emote {
+      background: rgba(255,255,255,0.1);
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+    
+    /* Text vs Emotes Grid */
+    .text-emote-grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
+      gap:16px;
+      margin-top:10px;
+    }
+    .text-emote-card{
+      background:rgba(255,255,255,0.03);
+      border-radius:14px;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      transition:transform 0.3s;
+      border:1px solid var(--border);
+    }
+    .text-emote-card:hover, .text-emote-card:active{
+      transform:scale(1.03);
+      box-shadow:0 8px 20px rgba(255,105,180,0.2);
+    }
+    .text-emote-card .label{font-size:12px;color:var(--muted);}
+    .text-emote-card .value{font-weight:700;font-size:15px;}
+    .user-name{font-weight:700;font-size:16px;margin-bottom:6px;color:var(--text-color);}
+    
+    /* Emote Cloud */
+    .emote-cloud{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .emote-pill{
+      padding:8px 14px;
+      border-radius:24px;
+      background:rgba(255,255,255,0.05);
+      font-size:14px;
+      transition:transform 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .emote-pill:hover{transform:scale(1.08)}
+    
+    /* Footer */
+    .footer{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-top:16px}
+    
+    /* Popup Styles */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .popup-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .popup-content {
+      background: linear-gradient(145deg, #0f1724, #071021);
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+    .popup-overlay.active .popup-content {
+      transform: scale(1);
+    }
+    .popup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .popup-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .close-popup {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      color: var(--text-color);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .popup-leaderboard {
+      max-height: 70vh;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+    .popup-leaderboard::-webkit-scrollbar {
+      width: 8px;
+    }
+    .popup-leaderboard::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+    }
+    .popup-leaderboard::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 4px;
+    }
+    
+    /* Mobile Optimization */
+    @media (max-width:768px){
+      .chatter-grid,
+      .text-emote-grid{
+        grid-template-columns: 1fr;
+      }
+      .controls button, input[type="text"]{
+        flex:1;
+        min-width:0;
+      }
+      .stats-row{
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .logo{width:44px;height:44px;font-size:14px}
+      h1{font-size:24px}
+      .big-title { font-size: 20px; }
+    }
+    @media (max-width:480px) {
+      h1 { font-size: 20px; }
+      .controls { flex-direction: column; }
+      .giveaway-banner { padding: 6px 10px; font-size: 12px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">KS</div>
+      <div style="flex:1">
+        <h1>n0chh Kick Live Stats — Top Chatter</h1>
+        <div class="sub">Real-time chat stats · Top chatters · Emotes</div>
+        <div class="giveaway-banner">
+          🎉 Top chatter every last week wins a $50 giveaway!
+        </div>
+      </div>
+      <div class="live-indicator">
+        <div id="liveDot" class="live-dot off"></div>
+        <span id="liveText">Offline</span>
+      </div>
+    </header>
+
+    <div class="controls">
+      <input id="channelInput" type="text" placeholder="Enter Kick channel (e.g. odablock)" value="odablock" />
+      <button id="startBtn"><i class="fa-solid fa-play"></i> Start</button>
+      <button id="stopBtn" class="secondary"><i class="fa-solid fa-stop"></i> Stop</button>
+      <button id="clearBtn" class="secondary">Clear</button>
+      <button id="popupBtn" class="secondary"><i class="fa-solid fa-expand"></i> Top Chatters</button>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="small">Channel: <strong id="channelNameDisplay">—</strong></div>
+          <div class="small">Started: <span id="sessionStart">—</span></div>
+        </div>
+        <div style="text-align:right">
+          <div class="small">Uptime</div>
+          <div style="font-weight:800;font-size:20px" id="streamDuration">—</div>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-pill">
+          <div class="num" id="totalMessages">0</div>
+          <div class="small">Messages</div>
+        </div>
+        <div class="stat-pill">
+          <div class="num" id="uniqueChatters">0</div>
+          <div class="small">Chatters</div>
+        </div>
+        <div class="stat-pill">
+          <div class="num" id="textMessages">0</div>
+          <div class="small">Text</div>
+        </div>
+        <div class="stat-pill">
+          <div class="num" id="emoteMessages">0</div>
+          <div class="small">Emotes</div>
+        </div>
+      </div>
+
+      <div class="big-title">🔥 Top Chatters (Live)</div>
+      <div class="leaderboard-container">
+        <div class="chatter-grid" id="topChattersGrid"></div>
+      </div>
+
+      <div class="big-title">📊 Top Chatters (Text vs Emotes)</div>
+      <div class="text-emote-grid" id="textEmoteGrid"></div>
+
+      <div class="big-title">🎭 Top Emotes</div>
+      <div class="emote-cloud" id="emoteCloud"></div>
+
+      <div class="footer">
+        <span>Real Kick usernames</span>
+        <span>Records: <span id="recordCount">0</span></span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Popup for Top Chatters -->
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup-content">
+      <div class="popup-header">
+        <div class="popup-title">🏆 Top Chatters Leaderboard</div>
+        <button class="close-popup" id="closePopup"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="popup-leaderboard" id="popupLeaderboard"></div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const channelInput = document.getElementById('channelInput');
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const popupBtn = document.getElementById('popupBtn');
+  const closePopup = document.getElementById('closePopup');
+  const popupOverlay = document.getElementById('popupOverlay');
+  const popupLeaderboard = document.getElementById('popupLeaderboard');
+  const channelNameDisplay = document.getElementById('channelNameDisplay');
+  const sessionStartEl = document.getElementById('sessionStart');
+  const totalMessagesEl = document.getElementById('totalMessages');
+  const uniqueChattersEl = document.getElementById('uniqueChatters');
+  const topChattersGrid = document.getElementById('topChattersGrid');
+  const textEmoteGrid = document.getElementById('textEmoteGrid');
+  const emoteCloud = document.getElementById('emoteCloud');
+  const emoteMessagesEl = document.getElementById('emoteMessages');
+  const textMessagesEl = document.getElementById('textMessages');
+  const liveDot = document.getElementById('liveDot');
+  const liveText = document.getElementById('liveText');
+  const streamDurationEl = document.getElementById('streamDuration');
+  const recordCountEl = document.getElementById('recordCount');
+
+  let kickWS = null;
+  let channel = '';
+  let chatroomId = null;
+  let sessionStart = null;
+  let streamStartTimestamp = null;
+  let reconnectTimer = null;
+
+  let messageCount = 0;
+  const userCounts = new Map();
+  const userTextCounts = new Map();
+  const userEmoteCounts = new Map();
+  const uniqueUserSet = new Set();
+  const emoteCounts = new Map();
+  let emoteMessageCount = 0;
+  let textMessageCount = 0;
+  let totalWords = 0;
+  const records = [];
+
+  const excludedKickBots = new Set([
+    "babblechat","botrix","casterlabs","intrx","livebot","lottobot","logibot","mrbeefbot","notibot",
+    "squadbot","babzbot","kickbot","kicklet","boostbot","kicktools","aerokick","streamlabs"
+  ]);
+
+  const kickWSUri = "wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&flash=false";
+
+  function setLiveIndicator(v){
+    if(v){ liveDot.className = 'live-dot live'; liveText.textContent = 'Live'; }
+    else{ liveDot.className = 'live-dot off'; liveText.textContent = 'Offline'; }
+  }
+
+  const emojiRegex = /(\p{Extended_Pictographic}|\p{Emoji_Presentation})/gu;
+  const colonEmoteRegex = /:([a-zA-Z0-9_+-]{2,50}):/g;
+
+  function extractEmotes(content){
+    const found = [];
+    if(!content) return found;
+    let m;
+    while((m = colonEmoteRegex.exec(content)) !== null) found.push(`:${m[1]}:`);
+    const emojiMatches = content.match(emojiRegex);
+    if(emojiMatches) emojiMatches.forEach(e => found.push(e));
+    return found;
+  }
+
+  function countWords(s){ return s?.trim() ? s.trim().split(/\s+/).filter(Boolean).length : 0; }
+
+  function updateDerivedMetrics(){
+    const elapsedMs = Date.now() - (sessionStart?.getTime() || Date.now());
+    const minutes = Math.max(elapsedMs / 60000, 1/60);
+    const wpm = Math.round(totalWords / minutes) || 0;
+    const mpm = Math.round(messageCount / minutes) || 0;
+  }
+
+  // Medal emojis for top ranks
+  const rankEmojis = {
+    1: '🥇',
+    2: '🥈',
+    3: '🥉',
+    default: '🏅'
+  };
+
+  function rerenderTop(){
+    const arr = Array.from(userCounts.entries()).sort((a,b)=>b[1]-a[1]);
+    const top = arr.slice(0, 10);
+
+    // Top Chatters (Live)
+    topChattersGrid.innerHTML = '';
+    top.forEach(([username, count], index) => {
+      const rank = index + 1;
+      const emotes = Array.from(userEmoteCounts.keys()).filter(u => u === username).length > 0 
+        ? [':heart:', ':fire:', ':star:'] 
+        : [':smile:', ':thumbsup:', ':cool:'];
+      
+      const card = document.createElement('div');
+      card.className = `chatter-card rank-${rank <= 3 ? rank : 'default'}`;
+      card.innerHTML = `
+        <div>
+          <div class="username">
+            ${rankEmojis[rank <= 3 ? rank : 'default']} ${escapeHtml(username)}
+          </div>
+          <div class="emote-display">
+            ${emotes.map(emote => `<span class="emote">${emote}</span>`).join('')}
+          </div>
+        </div>
+        <div>
+          <span class="message-count">${count.toLocaleString()}</span>
+          <div class="rank-badge">${rank}</div>
+        </div>
+      `;
+      topChattersGrid.appendChild(card);
+    });
+
+    // Popup Leaderboard
+    popupLeaderboard.innerHTML = '';
+    top.forEach(([username, count], index) => {
+      const rank = index + 1;
+      const listItem = document.createElement('div');
+      listItem.className = `chatter-card rank-${rank <= 3 ? rank : 'default'}`;
+      listItem.style.marginBottom = '12px';
+      listItem.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:24px;">${rankEmojis[rank <= 3 ? rank : 'default']}</span>
+            <span class="username" style="font-size:18px;">${escapeHtml(username)}</span>
+          </div>
+          <span class="message-count" style="font-size:18px;">${count.toLocaleString()}</span>
+        </div>
+      `;
+      popupLeaderboard.appendChild(listItem);
+    });
+
+    // Text vs Emotes
+// Text vs Emotes — as a ranked list
+textEmoteGrid.innerHTML = '';
+top.forEach(([username], index) => {
+  const rank = index + 1;
+  const textCount = userTextCounts.get(username) || 0;
+  const emoteCount = userEmoteCounts.get(username) || 0;
+
+  let cardClass = 'text-emote-card';
+  if (rank <= 3) cardClass += ` rank-${rank}`;
+  if (textCount > emoteCount) {
+    cardClass += ' text-dominant';
+  } else if (emoteCount > textCount) {
+    cardClass += ' emote-dominant';
+  }
+
+  const card = document.createElement('div');
+  card.className = cardClass;
+  card.innerHTML = `
+    <div class="rank-number">${rank}</div>
+    <div class="text-emote-content">
+      <div class="user-name">${escapeHtml(username)}</div>
+      <div><span class="label">Text:</span> <span class="value">${textCount.toLocaleString()}</span></div>
+      <div><span class="label">Emotes:</span> <span class="value">${emoteCount.toLocaleString()}</span></div>
+    </div>
+  `;
+  textEmoteGrid.appendChild(card);
+});
+   // Text vs Emotes
+textEmoteGrid.innerHTML = '';
+top.forEach(([username]) => {
+  const textCount = userTextCounts.get(username) || 0;
+  const emoteCount = userEmoteCounts.get(username) || 0;
+
+  let cardClass = 'text-emote-card';
+  if (textCount > emoteCount) {
+    cardClass += ' text-dominant';
+  } else if (emoteCount > textCount) {
+    cardClass += ' emote-dominant';
+  }
+
+  const card = document.createElement('div');
+  card.className = cardClass;
+  card.innerHTML = `
+    <div class="user-name">${escapeHtml(username)}</div>
+    <div><span class="label">Text:</span> <span class="value">${textCount.toLocaleString()}</span></div>
+    <div><span class="label">Emotes:</span> <span class="value">${emoteCount.toLocaleString()}</span></div>
+  `;
+  textEmoteGrid.appendChild(card);
+});
+
+    // Emotes
+    const emArr = Array.from(emoteCounts.entries()).sort((a,b)=>b[1]-a[1]).slice(0,20);
+    emoteCloud.innerHTML = '';
+    emArr.forEach(([em, count]) => {
+      const span = document.createElement('span');
+      span.className = 'emote-pill';
+      span.innerHTML = `<i class="fa-regular fa-face-smile"></i> ${em} ×${count}`;
+      emoteCloud.appendChild(span);
+    });
+
+    totalMessagesEl.innerText = messageCount.toLocaleString();
+    uniqueChattersEl.innerText = uniqueUserSet.size.toLocaleString();
+    emoteMessagesEl.innerText = emoteMessageCount.toLocaleString();
+    textMessagesEl.innerText = textMessageCount.toLocaleString();
+    recordCountEl.innerText = records.length.toLocaleString();
+    updateDerivedMetrics();
+  }
+
+  function escapeHtml(s){ return (s+'').replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'<','>':'>','"':'&quot;',"'":'&#39;' }[m])); }
+
+  function handleChatMessage(messageData){
+    try{
+      const sender = messageData.sender;
+      const content = messageData.content || '';
+      if(!sender?.username) return;
+      const username = String(sender.username).trim();
+      if(excludedKickBots.has(username.toLowerCase())) return;
+
+      messageCount++;
+      uniqueUserSet.add(username);
+      userCounts.set(username, (userCounts.get(username)||0) + 1);
+
+      const words = countWords(content);
+      totalWords += words;
+
+      const emotes = extractEmotes(content);
+      const isEmoteMessage = emotes.length > 0;
+
+      if(isEmoteMessage){
+        emoteMessageCount++;
+        userEmoteCounts.set(username, (userEmoteCounts.get(username)||0) + 1);
+        emotes.forEach(e => emoteCounts.set(e, (emoteCounts.get(e)||0) + 1));
+      } else {
+        textMessageCount++;
+        userTextCounts.set(username, (userTextCounts.get(username)||0) + 1);
+      }
+
+      records.push({ ts: Date.now(), username, msg: content });
+      if(records.length > 50000) records.shift();
+      rerenderTop();
+    }catch(e){ console.error(e); }
+  }
+
+  async function startListening(){
+    channel = channelInput.value.trim();
+    if(!channel){ alert('Enter a channel name.'); return; }
+    channelNameDisplay.innerText = channel;
+    sessionStart = new Date();
+    sessionStartEl.innerText = sessionStart.toLocaleTimeString();
+    streamDurationEl.innerText = '--:--:--';
+    setLiveIndicator(false);
+
+    try{
+      const res = await fetch(`https://kick.com/api/v2/channels/${encodeURIComponent(channel)}`);
+      if(!res.ok) throw new Error('Channel not found');
+      const data = await res.json();
+      if(!data.chatroom?.id) throw new Error('Chatroom unavailable');
+      chatroomId = data.chatroom.id;
+      if(data.livestream?.created_at){
+        streamStartTimestamp = new Date(data.livestream.created_at).getTime();
+        setLiveIndicator(!!data.livestream.is_live);
+      }
+    }catch(err){
+      alert('Error: ' + (err.message || 'Failed to load channel'));
+      return;
+    }
+
+    connectWebSocket();
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+    clearBtn.disabled = false;
+    channelInput.disabled = true;
+  }
+
+  function stopListening(){
+    if(kickWS){ kickWS.close(); kickWS = null; }
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+    channelInput.disabled = false;
+    setLiveIndicator(false);
+    if(reconnectTimer) clearTimeout(reconnectTimer);
+  }
+
+  function connectWebSocket(){
+    if(kickWS) kickWS.close();
+    kickWS = new WebSocket(kickWSUri);
+    kickWS.onopen = () => {
+      kickWS.send(JSON.stringify({ event: "pusher:subscribe", data: { auth: "", channel: `chatrooms.${chatroomId}.v2` } }));
+      sessionStart = sessionStart || new Date();
+      sessionStartEl.innerText = sessionStart.toLocaleTimeString();
+      startUptimeTimer();
+    };
+    kickWS.onclose = () => { reconnectTimer = setTimeout(connectWebSocket, 5000); };
+    kickWS.onmessage = (ev) => {
+      try{
+        const data = JSON.parse(ev.data);
+        if(data.event?.includes('ChatMessageEvent')){
+          let payload = data.data;
+          if(typeof payload === 'string') payload = JSON.parse(payload);
+          if(payload?.data && typeof payload.data === 'string') payload = JSON.parse(payload.data);
+          const msg = payload?.message || payload;
+          if(msg.sender && msg.content !== undefined) handleChatMessage(msg);
+        }
+      }catch(e){}
+    };
+  }
+
+  let uptimeInterval = null;
+  function startUptimeTimer(){
+    if(uptimeInterval) clearInterval(uptimeInterval);
+    uptimeInterval = setInterval(()=>{
+      if(streamStartTimestamp){
+        const elapsed = Date.now() - streamStartTimestamp;
+        const hh = String(Math.floor(elapsed / 3600000)).padStart(2,'0');
+        const mm = String(Math.floor(elapsed % 3600000 / 60000)).padStart(2,'0');
+        const ss = String(Math.floor(elapsed % 60000 / 1000)).padStart(2,'0');
+        streamDurationEl.innerText = `${hh}:${mm}:${ss}`;
+      } else {
+        streamDurationEl.innerText = '--:--:--';
+      }
+    }, 1000);
+  }
+
+  function clearSession(){
+    if(!confirm('Clear all session data?')) return;
+    messageCount = 0;
+    userCounts.clear(); userTextCounts.clear(); userEmoteCounts.clear();
+    uniqueUserSet.clear(); emoteCounts.clear();
+    emoteMessageCount = 0; textMessageCount = 0; totalWords = 0;
+    records.length = 0;
+    rerenderTop();
+  }
+
+  // Popup functionality
+  popupBtn.onclick = () => {
+    popupOverlay.classList.add('active');
+  };
+  
+  closePopup.onclick = () => {
+    popupOverlay.classList.remove('active');
+  };
+  
+  popupOverlay.onclick = (e) => {
+    if(e.target === popupOverlay) {
+      popupOverlay.classList.remove('active');
+    }
+  };
+
+  startBtn.onclick = startListening;
+  stopBtn.onclick = stopListening;
+  clearBtn.onclick = clearSession;
+  channelInput.onkeydown = (e) => { if(e.key === 'Enter') startBtn.click(); };
+
+  stopBtn.disabled = true;
+  clearBtn.disabled = true;
+  channelNameDisplay.innerText = channelInput.value || '—';
+  rerenderTop();
+})();
+</script>
+</body>
+</html>
