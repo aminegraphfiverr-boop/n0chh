@@ -737,7 +737,7 @@
     <div class="popup-content">
       <div class="popup-header">
         <div class="popup-title">
-          <img src="https://i.ibb.co/nJq4Sph/image-removebg-preview-5.png" alt="Logo" style="height: 100px; vertical-align: middle; margin-right: 8px;">
+          <img src="https://i.ibb.co/nJq4Sph/image-removebg-preview-5.png" alt="Logo" style="height: 60px; vertical-align: middle; margin-right: 8px;">
           Top Chatters
         </div>
         <button class="close-popup" id="closePopup"><i class="fa-solid fa-xmark"></i></button>
@@ -883,24 +883,23 @@
       topChattersGrid.appendChild(card);
     });
 
-    popupLeaderboard.innerHTML = '';
-    top.forEach(([username, count], index) => {
-      const rank = index + 1;
-      const listItem = document.createElement('div');
-      listItem.className = `chatter-card rank-${rank <= 3 ? rank : 'default'}`;
-      listItem.style.marginBottom = '12px';
-      listItem.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <span style="font-size:24px;">${rankEmojis[rank <= 3 ? rank : 'default']}</span>
-            <span class="username" style="font-size:18px;">${escapeHtml(username)}</span>
-          </div>
-          <span class="message-count" style="font-size:18px;">${count.toLocaleString()}</span>
-        </div>
-      `;
-      popupLeaderboard.appendChild(listItem);
-    });
-
+   popupLeaderboard.innerHTML = '';
+top.slice(0, 3).forEach(([username, count], index) => {
+  const rank = index + 1;
+  const listItem = document.createElement('div');
+  listItem.className = `chatter-card rank-${rank}`;
+  listItem.style.marginBottom = '12px';
+  listItem.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:64px;">${rankEmojis[rank]}</span>
+        <span class="username" style="font-size:30px;">${escapeHtml(username)}</span>
+      </div>
+      <span class="message-count" style="font-size:48px;">${count.toLocaleString()}</span>
+    </div>
+  `;
+  popupLeaderboard.appendChild(listItem);
+});
     textEmoteGrid.innerHTML = '';
     top.forEach(([username], index) => {
       const rank = index + 1;
