@@ -884,7 +884,7 @@
     });
 
    popupLeaderboard.innerHTML = '';
-top.slice(0, 3).forEach(([username, count], index) => {
+top.slice(0, 5).forEach(([username, count], index) => {
   const rank = index + 1;
   const listItem = document.createElement('div');
   listItem.className = `chatter-card rank-${rank}`;
