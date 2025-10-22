@@ -884,15 +884,18 @@
     });
 
    popupLeaderboard.innerHTML = '';
-top.slice(0, 5).forEach(([username, count], index) => {
+const topFive = top.slice(0, 5);
+topFive.forEach(([username, count], index) => {
+  if (!username || count == null) return; // skip invalid entries
+
   const rank = index + 1;
   const listItem = document.createElement('div');
-  listItem.className = `chatter-card rank-${rank}`;
+  listItem.className = `chatter-card rank-${rank <= 3 ? rank : 'default'}`;
   listItem.style.marginBottom = '12px';
   listItem.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
       <div style="display:flex;align-items:center;gap:12px;">
-        <span style="font-size:64px;">${rankEmojis[rank]}</span>
+        <span style="font-size:64px;">${rankEmojis[rank <= 3 ? rank : 'default']}</span>
         <span class="username" style="font-size:30px;">${escapeHtml(username)}</span>
       </div>
       <span class="message-count" style="font-size:48px;">${count.toLocaleString()}</span>
